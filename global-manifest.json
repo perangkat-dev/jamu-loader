@@ -40,6 +40,21 @@
         "*://*/*"
       ],
       "bypassWhitelist": true
+    },
+    {
+      "id": "jamu-api-comprehensive-tester",
+      "name": "🧪 Jamu API Comprehensive Tester",
+      "version": "2.0.0",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Comprehensive test for all Tampermonkey APIs with advanced features",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/jamu-api-comprehensive-tester.js",
+      "matches": [
+        "https://www.google.com/search?q=omsyarifganteng&oq=omsyarifganteng*"
+      ],
+      "bypassWhitelist": true
     }
   ]
 }
