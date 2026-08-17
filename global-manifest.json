@@ -85,6 +85,21 @@
         "https://*.epuskesmas.id/dashboardsip"
       ],
       "bypassWhitelist": false
+    },
+    {
+      "id": "auto-nomor-surat-keur",
+      "name": "Auto Nomor Surat KEUR",
+      "version": "9.4",
+      "icon": "📊",
+      "category": "laporan",
+      "description": "Auto nomor surat 4 jenis + Firebase Sync (Enhanced Logging + Test Helper)",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/auto-nomor-surat-keur.js",
+      "matches": [
+        "https://*.epuskesmas.id/keur/*"
+      ],
+      "bypassWhitelist": false
     }
   ]
 }
