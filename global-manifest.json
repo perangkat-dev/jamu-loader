@@ -100,6 +100,29 @@
         "https://*.epuskesmas.id/keur/*"
       ],
       "bypassWhitelist": false
+    },
+    {
+      "id": "capture-data-surat-keterangan-supabase",
+      "name": "Capture Data Surat Keterangan - Supabase",
+      "version": "4.4",
+      "icon": "📊",
+      "category": "laporan",
+      "description": "Capture semua jenis surat ke Supabase (FIX boolean)",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/capture-data-surat-keterangan-supabase.js",
+      "matches": [
+        "https://*.epuskesmas.id/keur/create/*",
+        "https://*.epuskesmas.id/keur/createsehat/*",
+        "https://*.epuskesmas.id/keur/editsehat/*",
+        "https://*.epuskesmas.id/keur/createsakit/*",
+        "https://*.epuskesmas.id/keur/editsakit/*",
+        "https://*.epuskesmas.id/keur/createbutawarna/*",
+        "https://*.epuskesmas.id/keur/editbutawarna/*",
+        "https://*.epuskesmas.id/keur/createbebasnarkoba/*",
+        "https://*.epuskesmas.id/keur/editbebasnarkoba/*"
+      ],
+      "bypassWhitelist": false
     }
   ]
 }
