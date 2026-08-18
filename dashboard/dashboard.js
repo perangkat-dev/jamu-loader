@@ -1,10 +1,10 @@
 // ============================================================
-// Jamu Dashboard - Module v1.0.6
+// Jamu Dashboard - Module v1.0.7
 // ============================================================
 (function() {
 'use strict';
 const MODULE_ID = 'jamu-dashboard';
-const VERSION = '1.0.6';
+const VERSION = '1.0.7';
 
 // ============================================================
 // 0. DEBUG FLAG
@@ -39,6 +39,20 @@ const Storage = {
         for (const [key, value] of Object.entries(obj)) {
             localStorage.setItem(`jamu_${key}`, JSON.stringify(value));
         }
+    },
+    remove(key) {
+        localStorage.removeItem(`jamu_${key}`);
+    },
+    clear() {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('jamu_')) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        log(`🧹 Cleared ${keysToRemove.length} storage items`);
     }
 };
 
@@ -434,9 +448,9 @@ function isModuleAllowedByTier(modTier, userTier, bypassWhitelist = false) {
 }
 
 // ============================================================
-// 6. INJECT MODULE
+// 6. INJECT MODULE - DIPERBAIKI
 // ============================================================
-async function injectModule(moduleId) {
+async function injectModule(moduleId, forceFetch = false) {
     const modules = getModules();
     const mod = modules.find(m => m.id === moduleId);
     
@@ -457,17 +471,42 @@ async function injectModule(moduleId) {
         return false;
     }
     
-    log(`🚀 Injecting: ${mod.id} (tier: ${mod.tier || 'dasar'}, bypass: ${mod.bypassWhitelist})`);
+    log(`🚀 Injecting: ${mod.id} (tier: ${mod.tier || 'dasar'}, bypass: ${mod.bypassWhitelist}, force: ${forceFetch})`);
     
     try {
-        const cached = await Storage.get([`script_${mod.id}`]);
-        let code = cached[`script_${mod.id}`]?.code;
+        let code = null;
+        let versionMatch = false;
         
-        if (!code || cached[`script_${mod.id}`]?.version !== mod.version) {
-            log(`📡 Fetching: ${mod.scriptUrl}`);
-            const res = await fetch(mod.scriptUrl);
+        if (!forceFetch) {
+            const cached = await Storage.get([`script_${mod.id}`]);
+            const cachedData = cached[`script_${mod.id}`];
+            if (cachedData && cachedData.code) {
+                if (cachedData.version === mod.version) {
+                    code = cachedData.code;
+                    versionMatch = true;
+                    log(`📦 Using cached script for ${mod.id} (v${mod.version})`);
+                } else {
+                    log(`⚠️ Version mismatch for ${mod.id}: cached ${cachedData.version} vs manifest ${mod.version}`);
+                }
+            }
+        }
+        
+        if (!code) {
+            const url = mod.scriptUrl;
+            log(`📡 Fetching${forceFetch ? ' (forced)' : ''}: ${url}`);
+            
+            const fetchUrl = forceFetch ? `${url}?t=${Date.now()}` : url;
+            const res = await fetch(fetchUrl, {
+                cache: forceFetch ? 'no-store' : 'default',
+                headers: forceFetch ? {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                } : {}
+            });
+            
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             code = await res.text();
+            
             await Storage.set({
                 [`script_${mod.id}`]: {
                     code,
@@ -475,6 +514,7 @@ async function injectModule(moduleId) {
                     fetchedAt: Date.now()
                 }
             });
+            log(`✅ Script fetched and cached for ${mod.id}`);
         }
         
         const meta = {
@@ -484,7 +524,8 @@ async function injectModule(moduleId) {
             category: mod.category || 'lainnya',
             description: mod.description || '',
             tier: mod.tier || 'dasar',
-            bypassWhitelist: mod.bypassWhitelist === true
+            bypassWhitelist: mod.bypassWhitelist === true,
+            injectedAt: new Date().toISOString()
         };
         
         const script = document.createElement('script');
@@ -493,7 +534,7 @@ async function injectModule(moduleId) {
                 try {
                     window.__meta__ = ${JSON.stringify(meta)};
                     ${code}
-                    console.log('[JamuLoader] ✅ ' + '${mod.id}' + ' executed');
+                    console.log('[JamuLoader] ✅ ' + '${mod.id}' + ' executed (v${mod.version})');
                 } catch (err) {
                     console.error('[JamuLoader] ❌ Error in ' + '${mod.id}' + ':', err);
                 }
@@ -502,7 +543,7 @@ async function injectModule(moduleId) {
         (document.head || document.documentElement).appendChild(script);
         script.remove();
         
-        log(`✅ ${mod.id} injected successfully`);
+        log(`✅ ${mod.id} injected successfully (v${mod.version})`);
         return true;
     } catch (err) {
         error(`❌ Failed to inject ${mod.id}:`, err);
@@ -511,10 +552,10 @@ async function injectModule(moduleId) {
 }
 
 // ============================================================
-// 7. AUTO INJECT MODULES
+// 7. AUTO INJECT MODULES - DIPERBAIKI
 // ============================================================
-async function injectAllModules() {
-    const userTier = await getUserTier();
+async function injectAllModules(forceFetch = false) {
+    const userTier = await getUserTier(forceFetch);
     log(`👤 User Tier: ${userTier}`);
     
     let modules = getModules().filter(m => m.id !== MODULE_ID);
@@ -553,7 +594,7 @@ async function injectAllModules() {
             continue;
         }
         
-        const result = await injectModule(mod.id);
+        const result = await injectModule(mod.id, forceFetch);
         if (result) success++;
         else failed++;
     }
@@ -563,13 +604,35 @@ async function injectAllModules() {
 }
 
 // ============================================================
-// 8. REFRESH STATUS
+// 8. REFRESH STATUS - DIPERBAIKI
 // ============================================================
-async function refreshStatus() {
+async function refreshStatus(forceHardRefresh = false) {
     log('🔄 Refreshing status...');
     
     Cache.clear('userTier');
     Cache.clear('whitelist');
+    
+    if (forceHardRefresh) {
+        log('🔨 HARD REFRESH - clearing all script caches...');
+        showToast('🔄 Hard refresh - clearing all caches...', 'info', 2000);
+        
+        const modules = getModules();
+        for (const mod of modules) {
+            if (mod.id !== MODULE_ID) {
+                Storage.remove(`script_${mod.id}`);
+                Cache.clear(`script_${mod.id}`);
+            }
+        }
+        
+        Storage.remove('moduleStates');
+        Storage.remove('userTier');
+        
+        showToast('🔄 Reloading page...', 'info', 1500);
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 1200);
+        return;
+    }
     
     const newTier = await getUserTier(true);
     
@@ -607,7 +670,10 @@ async function refreshStatus() {
 // 9. TOAST NOTIFICATION
 // ============================================================
 function showToast(message, type = 'info', duration = 3000) {
-    if (!shadowRoot) return;
+    if (!shadowRoot) {
+        console.log('[Toast]', message);
+        return;
+    }
     
     const existing = shadowRoot.getElementById('dashboard-toast');
     if (existing) existing.remove();
@@ -646,7 +712,7 @@ function getUICSS() {
         .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.96); width: 480px; max-height: 80vh; background: #0d0f12; color: #e8edf3; border: 1px solid #252a31; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 2; opacity: 0; pointer-events: none; transition: all 0.2s; display: flex; flex-direction: column; }
         .popup.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
         .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #131619; border-bottom: 1px solid #252a31; flex-shrink: 0; }
-        .header-left { display: flex; align-items: center; gap: 10px; }
+        .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .header-title { font-weight: 600; font-size: 16px; color: #e8edf3; }
         .header-title .jamu { color: #00d4aa; }
         .header-tier { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -656,11 +722,13 @@ function getUICSS() {
         .header-tier.all { background: rgba(255,255,255,0.06); color: #5a6472; border: 1px solid #252a31; }
         .header-tier.none { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
         .header-tier.unknown { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .header-actions { display: flex; gap: 8px; }
-        .header-close { background: none; border: none; color: #5a6472; font-size: 20px; cursor: pointer; padding: 0 4px; transition: all 0.2s; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .header-close { background: none; border: none; color: #5a6472; font-size: 20px; cursor: pointer; padding: 0 4px; transition: all 0.2s; line-height: 1; }
         .header-close:hover { color: #ef4444; }
         .header-close.refreshing { animation: jamu-spin 0.8s linear infinite; color: #00d4aa !important; }
         .header-close:disabled { opacity: 0.5; cursor: not-allowed; }
+        .header-hard { font-size: 16px !important; }
+        .header-hard:hover { color: #f59e0b !important; }
         @keyframes jamu-spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -687,29 +755,33 @@ function getUICSS() {
         .tier-pro { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
         .tier-max { background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); }
         .tier-undefined { background: rgba(255,255,255,0.05); color: #5a6472; border: 1px solid rgba(255,255,255,0.05); }
+        .tier-bypass { background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); }
         .module-toggle { flex-shrink: 0; margin-left: 12px; }
         .toggle-input { display: none; }
         .toggle-track { width: 32px; height: 18px; background: #2e3640; border-radius: 10px; cursor: pointer; transition: background 0.2s; display: block; position: relative; }
         .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #5a6472; border-radius: 50%; transition: all 0.2s; }
         .toggle-input:checked + .toggle-track { background: #00d4aa; }
         .toggle-input:checked + .toggle-track::after { transform: translateX(14px); background: #000; }
-        .status-bar { display: flex; justify-content: space-between; padding: 8px 16px; border-top: 1px solid #252a31; background: #131619; font-size: 10px; color: #5a6472; flex-shrink: 0; }
+        .status-bar { display: flex; justify-content: space-between; padding: 8px 16px; border-top: 1px solid #252a31; background: #131619; font-size: 10px; color: #5a6472; flex-shrink: 0; flex-wrap: wrap; gap: 4px; }
         .status-bar .active-count { color: #00d4aa; }
         .empty-state { padding: 32px 16px; text-align: center; color: #5a6472; font-size: 13px; }
         #dashboard-floating-btn { position: fixed !important; bottom: 24px !important; right: 24px !important; width: 56px !important; height: 56px !important; border-radius: 50% !important; background: #00d4aa !important; color: #000 !important; border: none !important; box-shadow: 0 4px 20px rgba(0,212,170,0.4) !important; font-size: 24px !important; cursor: pointer !important; z-index: 999999 !important; display: flex !important; align-items: center !important; justify-content: center !important; touch-action: manipulation !important; user-select: none !important; transition: transform 0.2s !important; font-family: 'Courier New', monospace !important; }
         #dashboard-floating-btn:active { transform: scale(0.85) !important; }
         #dashboard-floating-btn img { width: 32px; height: 32px; display: block; object-fit: contain; pointer-events: none; }
-        .toast { position: fixed; top: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 2147483647; opacity: 0; transform: translateX(400px); transition: all 0.3s ease; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .toast { position: fixed; top: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 2147483647; opacity: 0; transform: translateX(400px); transition: all 0.3s ease; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 90%; }
         .toast.show { opacity: 1; transform: translateX(0); }
         .toast-info { background: #1e293b; color: #e8edf3; border: 1px solid #334155; }
         .toast-success { background: #064e3b; color: #34d399; border: 1px solid #10b981; }
         .toast-error { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+        .toast-warning { background: #451a03; color: #fbbf24; border: 1px solid #f59e0b; }
         @media (max-width: 480px) { 
-            .popup { width: 95% !important; } 
+            .popup { width: 95% !important; max-height: 90vh !important; } 
             #dashboard-floating-btn { width: 48px !important; height: 48px !important; font-size: 20px !important; bottom: 16px !important; right: 16px !important; } 
             .module-name { font-size: 13px !important; }
             .module-info { flex-wrap: wrap; gap: 4px; }
             .toast { top: 16px; right: 16px; left: 16px; }
+            .header-title { font-size: 14px; }
+            .header-close { font-size: 16px; }
         }
     `;
 }
@@ -735,7 +807,8 @@ function createUI() {
                     <span class="header-tier" id="dashboard-tier">Loading...</span>
                 </div>
                 <div class="header-actions">
-                    <button class="header-close" id="dashboard-refresh" title="Refresh status (Ctrl+Shift+R)">🔄</button>
+                    <button class="header-close header-hard" id="dashboard-hard-refresh" title="Hard Refresh - Clear all cache & reload (Ctrl+Shift+H)">🔨</button>
+                    <button class="header-close" id="dashboard-refresh" title="Soft Refresh - Update status (Ctrl+Shift+R)">🔄</button>
                     <button class="header-close" id="dashboard-close">✕</button>
                 </div>
             </div>
@@ -752,6 +825,7 @@ function createUI() {
             <div class="status-bar">
                 <span id="dashboard-status">Ready</span>
                 <span class="active-count" id="dashboard-active">0 active</span>
+                <span style="font-size:9px;color:#3a434f;">v${VERSION}</span>
             </div>
         </div>
     `;
@@ -770,6 +844,7 @@ function createUI() {
     const popup = shadow.getElementById('dashboard-popup');
     const closeBtn = shadow.getElementById('dashboard-close');
     const refreshBtn = shadow.getElementById('dashboard-refresh');
+    const hardRefreshBtn = shadow.getElementById('dashboard-hard-refresh');
     
     const toggleUI = (show) => {
         isUIOpen = show;
@@ -790,10 +865,28 @@ function createUI() {
         refreshBtn.classList.add('refreshing');
         refreshBtn.disabled = true;
         try {
-            await refreshStatus();
+            await refreshStatus(false);
+            showToast('✅ Soft refresh completed', 'success');
+        } catch (err) {
+            showToast('❌ Refresh failed: ' + err.message, 'error');
         } finally {
             refreshBtn.classList.remove('refreshing');
             refreshBtn.disabled = false;
+        }
+    });
+    
+    hardRefreshBtn.addEventListener('click', async () => {
+        const confirmHard = confirm('⚠️ HARD REFRESH akan:\n\n- Menghapus semua cache script\n- Menghapus semua pengaturan module\n- Me-reload halaman\n\nLanjutkan?');
+        if (confirmHard) {
+            hardRefreshBtn.classList.add('refreshing');
+            hardRefreshBtn.disabled = true;
+            try {
+                await refreshStatus(true);
+            } catch (err) {
+                showToast('❌ Hard refresh failed: ' + err.message, 'error');
+                hardRefreshBtn.classList.remove('refreshing');
+                hardRefreshBtn.disabled = false;
+            }
         }
     });
     
@@ -805,7 +898,11 @@ function createUI() {
         }
         if (e.ctrlKey && e.shiftKey && (e.key === 'R' || e.key === 'r')) {
             e.preventDefault();
-            refreshStatus();
+            refreshBtn.click();
+        }
+        if (e.ctrlKey && e.shiftKey && (e.key === 'H' || e.key === 'h')) {
+            e.preventDefault();
+            hardRefreshBtn.click();
         }
     });
     
@@ -917,7 +1014,7 @@ async function renderModuleList() {
         const tierClass = `tier-${m.tier || 'undefined'}`;
         const tierLabel = m.tier || 'undefined';
         const icon = m.icon || '📦';
-        const bypassTag = m.bypassWhitelist ? ' <span style="color:#8b5cf6;font-size:10px;font-weight:600;">🌐</span>' : '';
+        const bypassTag = m.bypassWhitelist ? ' 🌐' : '';
         return `
             <div class="module-item" data-id="${m.id}">
                 <span class="module-icon">${icon}</span>
@@ -925,6 +1022,7 @@ async function renderModuleList() {
                     <span class="module-name">${m.name || m.id}${bypassTag}</span>
                     <span class="module-meta">
                         <span class="tier-badge ${tierClass}">${tierLabel}</span>
+                        ${m.bypassWhitelist ? '<span class="tier-badge tier-bypass">🌐BYPASS</span>' : ''}
                     </span>
                 </div>
                 <div class="module-toggle">
@@ -948,7 +1046,10 @@ async function renderModuleList() {
             moduleStates[id] = checked;
             await Storage.set({ moduleStates });
             if (checked) {
-                await injectModule(id);
+                await injectModule(id, true);
+                showToast(`✅ Module ${id} diaktifkan`, 'success', 1500);
+            } else {
+                showToast(`⏸️ Module ${id} dinonaktifkan`, 'info', 1500);
             }
             renderModuleList();
         });
@@ -993,13 +1094,18 @@ window.JamuDashboard = {
     createUI,
     getUserTier,
     refreshStatus,
-    clearCache: () => Cache.clear(),
+    clearCache: () => {
+        Storage.clear();
+        Cache.clear();
+        log('🧹 All caches cleared');
+    },
     get debug() { return DEBUG; },
     set debug(value) { 
         DEBUG = !!value;
         log(`🔧 Debug mode ${DEBUG ? 'enabled' : 'disabled'}`);
     },
-    status: 'ready'
+    status: 'ready',
+    VERSION: VERSION
 };
 
 // ============================================================
@@ -1010,18 +1116,27 @@ log(`✅ v${VERSION} loaded!`);
 (async function() {
     const userTier = await getUserTier();
     log(`👤 User Tier: ${userTier}`);
-    await injectAllModules();
+    await injectAllModules(false);
     createUI();
     
-    // Auto-refresh setiap 24 jam
+    // Auto soft refresh every 24 hours
     setInterval(() => {
-        log('🔄 Auto-refresh (24h interval)');
-        refreshStatus();
+        log('🔄 Auto soft-refresh (24h interval)');
+        refreshStatus(false);
     }, 24 * 60 * 60 * 1000);
+    
+    // Auto hard refresh every 7 days
+    setInterval(() => {
+        log('🔄 Auto hard-refresh (7 days interval)');
+        refreshStatus(true);
+    }, 7 * 24 * 60 * 60 * 1000);
 })();
 
-log(`💡 Klik tombol 📊 di pojok kanan bawah untuk membuka UI`);
-log(`💡 Tekan Ctrl+Shift+R untuk refresh status manual`);
-log(`💡 Set window.JamuDashboard.debug = false untuk mematikan console log`);
+log(`💡 Klik tombol 🍵 di pojok kanan bawah untuk membuka UI`);
+log(`💡 Tekan Ctrl+Shift+Q untuk toggle UI`);
+log(`💡 Tekan Ctrl+Shift+R untuk SOFT REFRESH (update tier & whitelist)`);
+log(`💡 Tekan Ctrl+Shift+H untuk HARD REFRESH (clear all cache & reload)`);
+log(`💡 Set window.JamuDashboard.debug = true untuk aktifkan console log`);
+log(`💡 Versi ${VERSION} - Fix: Cache & Refresh functionality`);
 
 })();
