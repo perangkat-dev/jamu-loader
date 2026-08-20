@@ -133,7 +133,7 @@
   "description": "Laporan Surat Keterangan 3.3",
   "tier": "dasar",
   "defaultEnabled": true,
-  "scriptUrl": "https://perangkat-dev.github.io/frontend/modules/laporan-surat-keterangan3-3.js",
+  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-surat-keterangan3-3.js",
   "matches": [
     "https://*.epuskesmas.id/dashboardsip"
   ],
