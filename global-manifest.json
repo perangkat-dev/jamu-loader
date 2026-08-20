@@ -22,9 +22,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/dashboard/dashboard.js",
-      "matches": [
-        "<all_urls>"
-      ]
+      "matches": ["<all_urls>"]
     },
     {
       "id": "draggable-ui",
@@ -36,9 +34,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/draggable-ui.js",
-      "matches": [
-        "*://*/*"
-      ],
+      "matches": ["*://*/*"],
       "bypassWhitelist": true
     },
     {
@@ -51,9 +47,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/jamu-api-comprehensive-tester.js",
-      "matches": [
-        "https://www.google.com/search?q=omsyarifganteng&oq=omsyarifganteng*"
-      ],
+      "matches": ["https://www.google.com/search?q=omsyarifganteng&oq=omsyarifganteng*"],
       "bypassWhitelist": true
     },
     {
@@ -66,9 +60,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-keuangan-harian-supabase.js",
-      "matches": [
-        "https://*.epuskesmas.id/dashboardsip"
-      ],
+      "matches": ["https://*.epuskesmas.id/dashboardsip"],
       "bypassWhitelist": false
     },
     {
@@ -81,9 +73,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-surat-keterangan3-3.js",
-      "matches": [
-        "https://*.epuskesmas.id/dashboardsip"
-      ],
+      "matches": ["https://*.epuskesmas.id/dashboardsip"],
       "bypassWhitelist": false
     },
     {
@@ -96,9 +86,7 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/auto-nomor-surat-keur.js",
-      "matches": [
-        "https://*.epuskesmas.id/keur/*"
-      ],
+      "matches": ["https://*.epuskesmas.id/keur/*"],
       "bypassWhitelist": false
     },
     {
@@ -125,44 +113,17 @@
       "bypassWhitelist": false
     },
     {
-  "id": "laporan-surat-keterangan3-3",
-  "name": "Lap Suket 01",
-  "version": "1.0.0",
-  "icon": "📊",
-  "category": "Lap Suket",
-  "description": "Laporan Surat Keterangan 3.3",
-  "tier": "dasar",
-  "defaultEnabled": true,
-  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-surat-keterangan3-3.js",
-  "matches": [
-    "https://*.epuskesmas.id/dashboardsip"
-  ],
-  "bypassWhitelist": false
-},
-    {
-  "id": "simple-ui-module",
-  "name": "Simple UI Module",
-  "version": "1.0.0",
-  "icon": "🧪",
-  "category": "tools",
-  "description": "Module UI sederhana untuk testing Supabase",
-  "tier": "dasar",
-  "defaultEnabled": true,
-  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/simple-ui-module.js",
-  "matches": ["<all_urls>"],
-  "bypassWhitelist": true
-}
-  ]{
-  "id": "simple-ui-module",
-  "name": "Simple UI Module",
-  "version": "1.0.0",
-  "icon": "🧪",
-  "category": "tools",
-  "description": "Module UI sederhana untuk testing Supabase",
-  "tier": "dasar",
-  "defaultEnabled": true,
-  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/simple-ui-module.js",
-  "matches": ["<all_urls>"],
-  "bypassWhitelist": true
-}
+      "id": "simple-ui-module",
+      "name": "Simple UI Module",
+      "version": "1.0.0",
+      "icon": "🧪",
+      "category": "tools",
+      "description": "Module UI sederhana untuk testing Supabase",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/simple-ui-module.js",
+      "matches": ["<all_urls>"],
+      "bypassWhitelist": true
+    }
+  ]
 }
