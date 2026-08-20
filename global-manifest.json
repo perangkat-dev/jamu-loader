@@ -123,6 +123,21 @@
         "https://*.epuskesmas.id/keur/editbebasnarkoba/*"
       ],
       "bypassWhitelist": false
-    }
+    },
+    {
+  "id": "laporan-surat-keterangan3-3",
+  "name": "Lap Suket 01",
+  "version": "1.0.0",
+  "icon": "📊",
+  "category": "Lap Suket",
+  "description": "Laporan Surat Keterangan 3.3",
+  "tier": "dasar",
+  "defaultEnabled": true,
+  "scriptUrl": "https://perangkat-dev.github.io/frontend/modules/laporan-surat-keterangan3-3.js",
+  "matches": [
+    "https://*.epuskesmas.id/dashboardsip"
+  ],
+  "bypassWhitelist": false
+}
   ]
 }
