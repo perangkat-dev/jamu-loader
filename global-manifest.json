@@ -169,6 +169,22 @@
       "dependencies": [],
       "bypassWhitelist": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/kessan-bpjs-auto.js"
+    },
+    {
+      "id": "data-pasien-reader",
+      "name": "Data Pasien Reader",
+      "version": "1.0",
+      "icon": "🧩",
+      "category": "tools",
+      "description": "Baca data pasien dan simpan ke localStorage, Modul ini harus aktif",
+      "tier": "dasar",
+      "defaultEnabled": false,
+      "matches": [
+        "https://*.epuskesmas.id/klaster_siklushidup/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": false,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/data-pasien-reader.js"
     }
   ]
 }
