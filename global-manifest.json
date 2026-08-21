@@ -185,6 +185,22 @@
       "dependencies": [],
       "bypassWhitelist": false,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/data-pasien-reader.js"
+    },
+    {
+      "id": "skrining-faktor-risiko",
+      "name": "Skrining Faktor Risiko",
+      "version": "1.0",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Auto-fill Skrining Faktor Risiko untuk semua gender dan usia",
+      "tier": "dasar",
+      "defaultEnabled": false,
+      "matches": [
+        "https://*.epuskesmas.id/skriningfaktorrisiko/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": false,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-faktor-risiko.js"
     }
   ]
 }
