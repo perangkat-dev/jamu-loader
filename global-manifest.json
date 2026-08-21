@@ -201,6 +201,22 @@
       "dependencies": [],
       "bypassWhitelist": false,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-faktor-risiko.js"
+    },
+    {
+      "id": "skrining-tbc",
+      "name": "Skrining TBC",
+      "version": "2.0",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Skrining TBC Oke",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "matches": [
+        "https://*.epuskesmas.id/skrining/tbc/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": false,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-tbc.js"
     }
   ]
 }
