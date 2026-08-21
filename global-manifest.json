@@ -124,6 +124,19 @@
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/simple-ui-module.js",
       "matches": ["<all_urls>"],
       "bypassWhitelist": true
-    }
+    },
+    {
+  "id": "test-module",
+  "name": "Test Module",
+  "version": "1.0.0",
+  "icon": "🧪",
+  "category": "tools",
+  "description": "Module test untuk verifikasi Supabase",
+  "tier": "dasar",
+  "defaultEnabled": true,
+  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/test-module.js",
+  "matches": ["<all_urls>"],
+  "bypassWhitelist": true
+}
   ]
 }
