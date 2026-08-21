@@ -22,7 +22,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/dashboard/dashboard.js",
-      "matches": ["<all_urls>"]
+      "matches": [
+        "<all_urls>"
+      ]
     },
     {
       "id": "draggable-ui",
@@ -34,7 +36,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/draggable-ui.js",
-      "matches": ["*://*/*"],
+      "matches": [
+        "*://*/*"
+      ],
       "bypassWhitelist": true
     },
     {
@@ -47,7 +51,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/jamu-api-comprehensive-tester.js",
-      "matches": ["https://www.google.com/search?q=omsyarifganteng&oq=omsyarifganteng*"],
+      "matches": [
+        "https://www.google.com/search?q=omsyarifganteng&oq=omsyarifganteng*"
+      ],
       "bypassWhitelist": true
     },
     {
@@ -60,7 +66,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-keuangan-harian-supabase.js",
-      "matches": ["https://*.epuskesmas.id/dashboardsip"],
+      "matches": [
+        "https://*.epuskesmas.id/dashboardsip"
+      ],
       "bypassWhitelist": false
     },
     {
@@ -73,7 +81,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/laporan-surat-keterangan3-3.js",
-      "matches": ["https://*.epuskesmas.id/dashboardsip"],
+      "matches": [
+        "https://*.epuskesmas.id/dashboardsip"
+      ],
       "bypassWhitelist": false
     },
     {
@@ -86,7 +96,9 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/auto-nomor-surat-keur.js",
-      "matches": ["https://*.epuskesmas.id/keur/*"],
+      "matches": [
+        "https://*.epuskesmas.id/keur/*"
+      ],
       "bypassWhitelist": false
     },
     {
@@ -122,21 +134,41 @@
       "tier": "dasar",
       "defaultEnabled": true,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/simple-ui-module.js",
-      "matches": ["<all_urls>"],
+      "matches": [
+        "<all_urls>"
+      ],
       "bypassWhitelist": true
     },
     {
-  "id": "test-module",
-  "name": "Test Module",
-  "version": "1.0.0",
-  "icon": "🧪",
-  "category": "tools",
-  "description": "Module test untuk verifikasi Supabase",
-  "tier": "dasar",
-  "defaultEnabled": true,
-  "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/test-module.js",
-  "matches": ["<all_urls>"],
-  "bypassWhitelist": true
-}
+      "id": "test-module",
+      "name": "Test Module",
+      "version": "1.0.0",
+      "icon": "🧪",
+      "category": "tools",
+      "description": "Module test untuk verifikasi Supabase",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/test-module.js",
+      "matches": [
+        "<all_urls>"
+      ],
+      "bypassWhitelist": true
+    },
+    {
+      "id": "kessan-bpjs-auto",
+      "name": "KESSAN BPJS Auto",
+      "version": "5.0",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Otomatis mengisi KESSAN BPJS Kesehatan dari daftar No. BPJS",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "matches": [
+        "https://kesan.bpjs-kesehatan.go.id/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": true,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/kessan-bpjs-auto.js"
+    }
   ]
 }
