@@ -235,6 +235,23 @@
       "dependencies": [],
       "bypassWhitelist": false,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-hipertensi.js"
+    },
+    {
+      "id": "ckg-sekolah-auto-answer-pemeriksaan-mandiri",
+      "name": "CKG Sekolah - Auto Answer Pemeriksaan Mandiri",
+      "version": "2.1",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Mengisi jawaban otomatis 9 form Pemeriksaan Mandiri CKG. Menampilkan Popup Ringkasan di halaman awal setelah selesai.",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "matches": [
+        "https://sehatindonesiaku.kemkes.go.id/ckg-pelayanan-sekolah/detail-pemeriksaan*",
+        "https://form.kemkes.go.id/v2/skrining-form/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": false,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/ckg-sekolah-auto-answer-pemeriksaan-mandiri.js"
     }
   ]
 }
