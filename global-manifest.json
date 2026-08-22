@@ -15,16 +15,18 @@
     {
       "id": "jamu-dashboard",
       "name": "Jamu Dashboard",
-      "version": "1.0.0",
-      "icon": "📊",
+      "version": "1.0.9",
+      "icon": "🧩",
       "category": "dashboard",
-      "description": "Manajemen modul Jamu Loader",
+      "description": "Jamu Dashboard with License UI - No GitHub Fallback",
       "tier": "dasar",
       "defaultEnabled": true,
-      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/dashboard/dashboard.js",
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/jamu-dashboard.js",
       "matches": [
-        "<all_urls>"
-      ]
+        "*://*/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": true
     },
     {
       "id": "draggable-ui",
