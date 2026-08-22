@@ -90,7 +90,7 @@
       "id": "auto-nomor-surat-keur",
       "name": "Auto Nomor Surat KEUR",
       "version": "9.4",
-      "icon": "📊",
+      "icon": "🧩",
       "category": "laporan",
       "description": "Auto nomor surat 4 jenis + Firebase Sync (Enhanced Logging + Test Helper)",
       "tier": "dasar",
@@ -99,7 +99,8 @@
       "matches": [
         "https://*.epuskesmas.id/keur/*"
       ],
-      "bypassWhitelist": false
+      "bypassWhitelist": false,
+      "dependencies": []
     },
     {
       "id": "capture-data-surat-keterangan-supabase",
