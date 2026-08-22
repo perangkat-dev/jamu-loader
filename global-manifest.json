@@ -217,6 +217,22 @@
       "dependencies": [],
       "bypassWhitelist": false,
       "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-tbc.js"
+    },
+    {
+      "id": "skrining-hipertensi",
+      "name": "Skrining Hipertensi",
+      "version": "1.0",
+      "icon": "🧩",
+      "category": "skrining",
+      "description": "Skrining Hipertensi untuk semua gender dan usia (langsung jalan otomatis)",
+      "tier": "dasar",
+      "defaultEnabled": true,
+      "matches": [
+        "https://*.epuskesmas.id/skrininghipertensi/*"
+      ],
+      "dependencies": [],
+      "bypassWhitelist": false,
+      "scriptUrl": "https://perangkat-dev.github.io/jamu-loader/modules/skrining-hipertensi.js"
     }
   ]
 }
